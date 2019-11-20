@@ -60,12 +60,13 @@ func _ready():
 		map_buildings.append(x_list)
 	
 	#Generate a ship
-	primCol = Color(randf(), randf(), randf())
-	secoCol = Color(randf(), randf(), randf())
+	primCol = MedAlgo.generate_darkenable_color(0.4)
+	secoCol = MedAlgo.generate_darkenable_color(0.4)
 	ladderCol = Color(randf(), randf(), randf())
 	var ship_data = RogueGen.GenerateMazeShip(5 + randi()%5)
 	print(ship_data)
 	
+	##GEneRATE THE MIDDLE LAYER TILES
 	var x_index = 0 
 	var y_index = 0
 	for row in ship_data:
@@ -76,7 +77,7 @@ func _ready():
 			var buildingTile = BuildingTile.instance()
 			buildingTile.position = Vector2( (10+x_index)*cell_size,world_height - (cell_size*(y_index+1)))
 			x_index = x_index + 1
-			add_child(buildingTile)
+			$MidLayerTiles.add_child(buildingTile)
 			buildingTile.setColors(primCol, secoCol)
 			#buildingTile.setTile(5)
 			#The tile index depends on the value of e...
@@ -92,7 +93,60 @@ func _ready():
 					buildingTile.setColors(ladderCol,ladderCol)
 			
 		y_index = y_index + 1
-		
+		#Turn on the layer
+		$MidLayerTiles.visible = true
+	pass
+
+	##GEneRATE THE TOP LAYER TILES
+	x_index = 0 
+	y_index = 0
+	for row in ship_data:
+		x_index = 0
+		for e in row:
+			#Gonna make a new BuildingTile
+			var BuildingTile = load("res://Scenes//BuildingTile.tscn") #Used as a template for making items
+			var buildingTile = BuildingTile.instance()
+			buildingTile.position = Vector2( (10+x_index)*cell_size,world_height - (cell_size*(y_index+1)))
+			x_index = x_index + 1
+			$TopLayerTiles.add_child(buildingTile)
+			buildingTile.setColors(primCol, secoCol)
+			#buildingTile.setTile(5)
+			#The tile index depends on the value of e...
+			if e == 0:
+				buildingTile.setTile(0)
+			else:
+				buildingTile.setTile(4)
+
+			
+		y_index = y_index + 1
+		#Turn on the layer
+		$TopLayerTiles.visible = true
+	pass
+
+	##GEneRATE THE BOT LAYER TILES
+	x_index = 0 
+	y_index = 0
+	for row in ship_data:
+		x_index = 0
+		for e in row:
+			#Gonna make a new BuildingTile
+			var BuildingTile = load("res://Scenes//BuildingTile.tscn") #Used as a template for making items
+			var buildingTile = BuildingTile.instance()
+			buildingTile.position = Vector2( (10+x_index)*cell_size,world_height - (cell_size*(y_index+1)))
+			x_index = x_index + 1
+			$BotLayerTiles.add_child(buildingTile)
+			buildingTile.setColors(MedAlgo.color_shift(primCol,-0.37), MedAlgo.color_shift(secoCol, -0.27))
+			#buildingTile.setTile(5)
+			#The tile index depends on the value of e...
+			if e == 0:
+				buildingTile.setTile(0)
+			else:
+				buildingTile.setTile(1+randi()%3)
+
+			
+		y_index = y_index + 1
+		#Turn on the layer
+		$BotLayerTiles.visible = true
 	pass
 
 #func _process(delta):
@@ -100,8 +154,9 @@ func _ready():
 #	# Update game logic here.
 #	pass
 
-
-
+func _input(event):
+	if event.is_action_pressed("ui_top_layer_toggle"):
+		$TopLayerTiles.visible = !$TopLayerTiles.visible
 
 
 # TODO: We'll eventually have to create a similarily sized ship wall side view (that can cover the maze inside)

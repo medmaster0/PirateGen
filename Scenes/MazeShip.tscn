@@ -8,3 +8,11 @@ script = ExtResource( 1 )
 [node name="TileMap" type="TileMap" parent="."]
 cell_size = Vector2( 16, 16 )
 format = 1
+
+[node name="MidLayerTiles" type="Node2D" parent="."]
+
+[node name="TopLayerTiles" type="Node2D" parent="."]
+z_index = 1
+
+[node name="BotLayerTiles" type="Node2D" parent="."]
+z_index = -1
